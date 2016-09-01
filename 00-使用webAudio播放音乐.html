@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>00-使用webAudio播放音乐</title>
+</head>
+<body>
+	<form name="myForm">
+		<input type="file" name="uploadMusic" id="uploadMusic" />
+	</form>
+  
+  <script>
+    var uploadMusic = document.getElementById('uploadMusic');
+    var ctx = new AudioContext();
+
+    uploadMusic.onchange = function (e) {
+    // 当读取文件后, file元素就会有一个files属性，存放读取的文件
+    console.dir(uploadMusic);
+    console.dir(uploadMusic.files);
+    // 得到读取的File对象后, 就可以读取file的内容了
+    console.dir(uploadMusic.files[0]);
+    var file = uploadMusic.files[0];
+    var fr = new FileReader();
+    console.dir(fr);
+    fr.onload = function (e) {
+    // e是ProgressEvent对象, 记录加载进度的对象, loaded和total分别记录了加载多少字节的数据
+    console.dir(e);
+    console.log('onload');
+    // 加载成功后, fr对象的result属性就有值了, 值的内容是: data:audio/mp3;base64,SUQzAwAAAApbOlRTU0UAAA....
+
+    ctx.decodeAudioData(this.result, function (buffer) {
+    var source = ctx.createBufferSource();
+    source.buffer = buffer;
+    source.connect(ctx.destination);
+    source.start(0);
+    });
+    };
+  //    fr.readAsDataURL(file);
+    //    fr.readAsBinaryString(file);
+    fr.readAsArrayBuffer(file);
+    };
+  </script>
+</body>
+</html>
